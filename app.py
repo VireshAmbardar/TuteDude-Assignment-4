@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, json, jsonify, render_template, request, redirect, url_for
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure, ServerSelectionTimeoutError
 import os
@@ -72,6 +72,19 @@ def submit_data():
     except Exception as e:
         error_message = f"Error submitting data: {str(e)}"
         return render_template('form.html', error=error_message)
+    
+
+# NEW API ROUTE
+@app.route('/api')
+def api_endpoint():
+    try:
+        with open('data.json', 'r') as file:
+            data = json.load(file)
+        return jsonify(data)
+    except FileNotFoundError:
+        return jsonify({"error": "data.json file not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/success')
 def success():
