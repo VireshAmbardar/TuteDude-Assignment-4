@@ -72,19 +72,21 @@ def submit_data():
     except Exception as e:
         error_message = f"Error submitting data: {str(e)}"
         return render_template('form.html', error=error_message)
-    
 
-# NEW API ROUTE
-@app.route('/api')
+@app.route('/api', methods=['GET'])
 def api_endpoint():
     try:
-        with open('data.json', 'r') as file:
-            data = json.load(file)
+        with open("data.json", 'r') as f:
+            data = json.load(f)
+        
         return jsonify(data)
-    except FileNotFoundError:
-        return jsonify({"error": "data.json file not found"}), 404
+    
+    except json.JSONDecodeError:
+        return jsonify({"error": "Invalid JSON in data file"}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
 
 @app.route('/success')
 def success():
