@@ -74,7 +74,6 @@ def submit_data():
         return render_template('form.html', error=error_message)
     
 
-# NEW API ROUTE
 @app.route('/api')
 def api_endpoint():
     try:
