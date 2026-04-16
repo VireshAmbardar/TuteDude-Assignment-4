@@ -41,7 +41,7 @@ except Exception as e:
 def form_page():
     return render_template('form.html')
 
-@app.route('/submit', methods=['POST'])
+@app.route('/submittodoitem', methods=['POST'])
 def submit_data():
     if collection is None:
         error_message = "Database connection failed. Please try again later."
