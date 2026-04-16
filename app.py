@@ -13,7 +13,7 @@ app.secret_key = os.getenv('SECRET_KEY', 'default_secret_key')
 # MongoDB Atlas connection using .env variables
 try:
     password = os.getenv('MONGO_PASSWORD')
-    mongodb_uri = f"mongodb+srv://ambardarviresh18:{os.getenv('MONGO_PASSWORD')}@tutedude.dw5lcw2.mongodb.net/"
+    mongodb_uri = f"mongodb+srv://ambardarviresh18:{password}@tutedude.dw5lcw2.mongodb.net/"
     
     db_name = os.getenv('MONGO_DB_NAME', 'TestDB') 
     collection_name = os.getenv('MONGO_COLLECTION_NAME', 'Sample')
@@ -64,23 +64,21 @@ def submit_data():
         collection.insert_one(data)
         return redirect(url_for('success'))
         
-    except ValueError:
-        error_message = "Age must be a valid number"
-        return render_template('form.html', error=error_message)
     except Exception as e:
         error_message = f"Error submitting data: {str(e)}"
         return render_template('form.html', error=error_message)
 
 @app.route('/api', methods=['GET'])
 def api_endpoint():
+    if collection is None:
+        return jsonify({"error": "Database not connected"}), 503
+    
     try:
-        with open("data.json", 'r') as f:
-            data = json.load(f)
-        
+        # Fetch all items, exclude _id as it's not JSON serializable natively without help
+        cursor = collection.find({}, {'_id': 0})
+        data = list(cursor)
         return jsonify(data)
     
-    except json.JSONDecodeError:
-        return jsonify({"error": "Invalid JSON in data file"}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
