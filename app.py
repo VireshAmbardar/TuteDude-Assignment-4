@@ -41,7 +41,7 @@ except Exception as e:
 def form_page():
     return render_template('form.html')
 
-@app.route('/submit', methods=['POST'])
+@app.route('/submittodoitem', methods=['POST'])
 def submit_data():
     if collection is None:
         error_message = "Database connection failed. Please try again later."
@@ -49,18 +49,16 @@ def submit_data():
     
     try:
         name = request.form['name']
-        email = request.form['email']
-        age = request.form['age']
+        description = request.form['description']
         
         # Validate inputs
-        if not name or not email or not age:
+        if not name or not description:
             error_message = "All fields are required"
             return render_template('form.html', error=error_message)
         
         data = {
             "name": name,
-            "email": email,
-            "age": int(age)
+            "description": description,
         }
         
         collection.insert_one(data)
