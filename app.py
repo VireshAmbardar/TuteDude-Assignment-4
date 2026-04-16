@@ -49,18 +49,16 @@ def submit_data():
     
     try:
         name = request.form['name']
-        email = request.form['email']
-        age = request.form['age']
+        description = request.form['description']
         
         # Validate inputs
-        if not name or not email or not age:
+        if not name or not description:
             error_message = "All fields are required"
             return render_template('form.html', error=error_message)
         
         data = {
             "name": name,
-            "email": email,
-            "age": int(age)
+            "description": description,
         }
         
         collection.insert_one(data)
